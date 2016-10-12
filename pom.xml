@@ -9,7 +9,7 @@
   <version>1.0-SNAPSHOT</version>
   <name>Parent</name>
   <description>Just a pom that makes it easy to build both projects at the same time.</description>
-<artifactId>jenkins-war</artifactId>
+
   <packaging>war</packaging>
 
   <name>Jenkins war</name>
