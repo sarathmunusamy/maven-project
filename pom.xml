@@ -14,6 +14,11 @@
     <module>single-module</module>
   </modules>
          
+         
+         <prerequisites>
+    <maven>3.0.3</maven>
+  </prerequisites>
+         
            <dependencies>
     <dependency>
       <groupId>org.jenkins-ci</groupId>
@@ -108,8 +113,6 @@
          
 
 
-  <prerequisites>
-    <maven>3.0.3</maven>
-  </prerequisites>
+
 
 </project>
