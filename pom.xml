@@ -52,11 +52,8 @@
                 <version>${checkstyle.plugin.version}</version>
                 <!-- Specifying configuration here will take effect on the execution of "mvn site",
                      but will not take effect on the execution of "mvn checkstyle:checkstyle"  -->
-                <configuration>
-                    <configLocation>checkstyle.xml</configLocation>
-                    <failOnViolation>false</failOnViolation>
-                </configuration>
-                     <executions>
+               
+                      <executions>
                         <execution>
                             <id>checkstyle-check</id>
                             <goals>
@@ -71,6 +68,13 @@
                             </configuration>
                         </execution>
                     </executions>
+                     
+                     
+                     <configuration>
+                    <configLocation>checkstyle.xml</configLocation>
+                    <failOnViolation>false</failOnViolation>
+                </configuration>
+                    
             </plugin>
         </plugins>
     </reporting>
