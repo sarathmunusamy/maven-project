@@ -1,117 +1,74 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0
+                             http://maven.apache.org/xsd/maven-4.0.0.xsd">
 
-  <modelVersion>4.0.0</modelVersion>
+    <modelVersion>4.0.0</modelVersion>
 
-  <groupId>com.example.maven-samples</groupId>
-  <artifactId>parent</artifactId>
-  <packaging>pom</packaging>
-  <version>1.0-SNAPSHOT</version>
-  <name>Parent</name>
-  <description>Just a pom that makes it easy to build both projects at the same time.</description>
-  <modules>
-    <module>multi-module</module>
-    <module>single-module</module>
-  </modules>
-         
-         
-         <prerequisites>
-    <maven>3.0.3</maven>
-  </prerequisites>
-         
-           <dependencies>
-    <dependency>
-      <groupId>org.jenkins-ci</groupId>
-      <artifactId>executable-war</artifactId>
-      <version>1.32</version>
-      <scope>provided</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.jenkins-ci.main</groupId>
-      <artifactId>jenkins-core</artifactId>
-      <version>${project.version}</version>
-      <exclusions>
-        <!--
-          jars that are not needed in war. most of the exclusions should happen in the core, to make IDEs happy, not here.
-        -->
-        <exclusion>
-          <groupId>javax.servlet</groupId>
-          <artifactId>servlet-api</artifactId>
-        </exclusion>
-        <exclusion>
-          <groupId>javax.servlet</groupId>
-          <artifactId>jsp-api</artifactId>
-        </exclusion>
-        <!-- Stapler 1.195 fails to declare this as optional, and the 1.1 version lacks a license: -->
-        <exclusion>
-          <artifactId>metainf-services</artifactId>
-          <groupId>org.kohsuke.metainf-services</groupId>
-        </exclusion>
-      </exclusions>
-    </dependency>
-    <dependency>
-      <groupId>${project.groupId}</groupId>
-      <artifactId>remoting</artifactId>
-      <!-- specified in the parent -->
-    </dependency>    
-    <dependency>
-      <groupId>${project.groupId}</groupId>
-      <artifactId>cli</artifactId>
-      <classifier>jar-with-dependencies</classifier>
-      <version>${project.version}</version>
-      <scope>provided</scope>
-    </dependency>
-    <dependency>
-      <!--
-        not actually used by test but used by dependency plugin to include it inside the war.
-      -->
-      <groupId>org.jenkins-ci</groupId>
-      <artifactId>winstone</artifactId>
-      <version>2.9</version>
-      <scope>test</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.jenkins-ci.modules</groupId>
-      <artifactId>instance-identity</artifactId>
-      <version>1.5.1</version>
-    </dependency>
-    <dependency>
-      <groupId>org.jenkins-ci.modules</groupId>
-      <artifactId>ssh-cli-auth</artifactId>
-      <version>1.2</version>
-    </dependency>
-    <dependency>
-      <groupId>org.jenkins-ci.modules</groupId>
-      <artifactId>slave-installer</artifactId>
-      <version>1.5</version>
-    </dependency>
-    <dependency>
-      <groupId>org.jenkins-ci.modules</groupId>
-      <artifactId>windows-slave-installer</artifactId>
-      <version>1.5.1</version>
-    </dependency>
-    <dependency>
-      <groupId>org.jenkins-ci.modules</groupId>
-      <artifactId>launchd-slave-installer</artifactId>
-      <version>1.2</version>
-    </dependency>
-    <dependency>
-      <groupId>org.jenkins-ci.modules</groupId>
-      <artifactId>upstart-slave-installer</artifactId>
-      <version>1.1</version>
-    </dependency>
-    <dependency>
-      <groupId>org.jenkins-ci.modules</groupId>
-      <artifactId>systemd-slave-installer</artifactId>
-      <version>1.1</version>
-    </dependency>
-    <dependency>
-      <groupId>org.jenkins-ci.modules</groupId>
-      <artifactId>sshd</artifactId>
-      <version>1.6</version>
-    </dependency>
-         
+    <groupId>com.github.sevntu.checkstyle</groupId>
+    <artifactId>maven-project</artifactId>
+    <version>0.0.1-SNAPSHOT</version>
+    <packaging>jar</packaging>
 
+    <properties>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <checkstyle.version>7.1.2</checkstyle.version>
+        <checkstyle.plugin.version>2.17</checkstyle.plugin.version>
+        <sevntu.checkstyle.plugin.version>1.21.0</sevntu.checkstyle.plugin.version>
+    </properties>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-checkstyle-plugin</artifactId>
+                <version>${checkstyle.plugin.version}</version>
+                <dependencies>
+                    <dependency>
+                        <groupId>com.puppycrawl.tools</groupId>
+                        <artifactId>checkstyle</artifactId>
+                        <version>${checkstyle.version}</version>
+                    </dependency>
+                    <dependency>
+                        <groupId>com.github.sevntu.checkstyle</groupId>
+                        <artifactId>sevntu-checkstyle-maven-plugin</artifactId>
+                        <version>${sevntu.checkstyle.plugin.version}</version>
+                    </dependency>
+                </dependencies>
+                <!-- Specifying configuration here will take effect on the execution of "mvn checkstyle:checkstyle",
+                     but will not take effect on the execution of "mvn site"  -->
+                <configuration>
+                    <configLocation>checkstyle.xml</configLocation>
+                    <failOnViolation>false</failOnViolation>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
+
+    <reporting>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-checkstyle-plugin</artifactId>
+                <version>${checkstyle.plugin.version}</version>
+                <!-- Specifying configuration here will take effect on the execution of "mvn site",
+                     but will not take effect on the execution of "mvn checkstyle:checkstyle"  -->
+                <configuration>
+                    <configLocation>checkstyle.xml</configLocation>
+                    <failOnViolation>false</failOnViolation>
+                </configuration>
+            </plugin>
+        </plugins>
+    </reporting>
+
+    <pluginRepositories>
+        <pluginRepository>
+            <id>sevntu-maven</id>
+            <name>sevntu-maven</name>
+            <url>http://sevntu-checkstyle.github.io/sevntu.checkstyle/maven2</url>
+        </pluginRepository>
+    </pluginRepositories>
+
+</project>
 
 
 
