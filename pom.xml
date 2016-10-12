@@ -56,6 +56,21 @@
                     <configLocation>checkstyle.xml</configLocation>
                     <failOnViolation>false</failOnViolation>
                 </configuration>
+                     <executions>
+                        <execution>
+                            <id>checkstyle-check</id>
+                            <goals>
+                                <goal>check</goal>
+                            </goals>
+                            <phase>compile</phase>  <!--  Default is "verify" -->
+                            <configuration>
+                                <violationSeverity>error</violationSeverity>
+                                <maxAllowedViolations>7000</maxAllowedViolations>
+                                <failOnViolation>true</failOnViolation>
+                                <failsOnError>true</failsOnError>
+                            </configuration>
+                        </execution>
+                    </executions>
             </plugin>
         </plugins>
     </reporting>
