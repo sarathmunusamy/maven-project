@@ -10,134 +10,15 @@
   <name>Parent</name>
   <description>Just a pom that makes it easy to build both projects at the same time.</description>
 
-   <properties>
-    <JENKINS_HOME>${basedir}/work</JENKINS_HOME>
-    <contextPath>/jenkins</contextPath><!-- context path during test -->
-    <port>8080</port><!-- HTTP listener port -->
-  </properties>
+  <modules>
+    <module>multi-module</module>
+    <module>single-module</module>
+  </modules>
 
-  <dependencies>
-    <dependency>
-      <groupId>org.jenkins-ci</groupId>
-      <artifactId>executable-war</artifactId>
-      <version>1.32</version>
-      <scope>provided</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.jenkins-ci.main</groupId>
-      <artifactId>jenkins-core</artifactId>
-      <version>${project.version}</version>
-      <exclusions>
-        <!--
-          jars that are not needed in war. most of the exclusions should happen in the core, to make IDEs happy, not here.
-        -->
-        <exclusion>
-          <groupId>javax.servlet</groupId>
-          <artifactId>servlet-api</artifactId>
-        </exclusion>
-        <exclusion>
-          <groupId>javax.servlet</groupId>
-          <artifactId>jsp-api</artifactId>
-        </exclusion>
-        <!-- Stapler 1.195 fails to declare this as optional, and the 1.1 version lacks a license: -->
-        <exclusion>
-          <artifactId>metainf-services</artifactId>
-          <groupId>org.kohsuke.metainf-services</groupId>
-        </exclusion>
-      </exclusions>
-    </dependency>
-    <dependency>
-      <groupId>${project.groupId}</groupId>
-      <artifactId>remoting</artifactId>
-      <!-- specified in the parent -->
-    </dependency>    
-    <dependency>
-      <groupId>${project.groupId}</groupId>
-      <artifactId>cli</artifactId>
-      <classifier>jar-with-dependencies</classifier>
-      <version>${project.version}</version>
-      <scope>provided</scope>
-    </dependency>
-    <dependency>
-      <!--
-        not actually used by test but used by dependency plugin to include it inside the war.
-      -->
-      <groupId>org.jenkins-ci</groupId>
-      <artifactId>winstone</artifactId>
-      <version>2.9</version>
-      <scope>test</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.jenkins-ci.modules</groupId>
-      <artifactId>instance-identity</artifactId>
-      <version>1.5.1</version>
-    </dependency>
-    <dependency>
-      <groupId>org.jenkins-ci.modules</groupId>
-      <artifactId>ssh-cli-auth</artifactId>
-      <version>1.2</version>
-    </dependency>
-    <dependency>
-      <groupId>org.jenkins-ci.modules</groupId>
-      <artifactId>slave-installer</artifactId>
-      <version>1.5</version>
-    </dependency>
-    <dependency>
-      <groupId>org.jenkins-ci.modules</groupId>
-      <artifactId>windows-slave-installer</artifactId>
-      <version>1.5.1</version>
-    </dependency>
-    <dependency>
-      <groupId>org.jenkins-ci.modules</groupId>
-      <artifactId>launchd-slave-installer</artifactId>
-      <version>1.2</version>
-    </dependency>
-    <dependency>
-      <groupId>org.jenkins-ci.modules</groupId>
-      <artifactId>upstart-slave-installer</artifactId>
-      <version>1.1</version>
-    </dependency>
-    <dependency>
-      <groupId>org.jenkins-ci.modules</groupId>
-      <artifactId>systemd-slave-installer</artifactId>
-      <version>1.1</version>
-    </dependency>
-    <dependency>
-      <groupId>org.jenkins-ci.modules</groupId>
-      <artifactId>sshd</artifactId>
-      <version>1.6</version>
-    </dependency>
-    <dependency>
-      <!--
-        We bundle slf4j binding since we got some components (sshd for example)
-        that uses slf4j.
-        The problem with not shipping any binding in the war is that if the
-        servlet container does use slf4j in itself, then we got a classloader
-        constraint violation (see JENKINS-12334) as we try to load StaticLoggerBinder
-        which resides in the binding jar (this jar would be from container implementation,
-        which relies on slf4j api in the container, when we have our own slf4j API jar
-        statically depending on the binding jar.)
-        We also get tickets like JENKINS-12650 for not reporting logs at all
-        (although this is a non-fatal problem.)
-        The downside of adding a jar is that we can potentially get "multiple binding jar"
-        warning like http://www.slf4j.org/codes.html, but that's at least non-fatal.
-      -->
-      <groupId>org.slf4j</groupId>
-      <artifactId>slf4j-jdk14</artifactId>
-    </dependency>
-
-    <!-- offline profiler API when we need it -->
-
-    <!--dependency
-      <groupId>com.yourkit.api</groupId>
-      <artifactId>yjp</artifactId>
-      <version>dontcare</version>
-      <scope>system</scope>
-      <systemPath>/usr/local/yjp/lib/yjp.jar</systemPath>
-    </dependency-->
-  </dependencies>
-
-  <build>
+  <prerequisites>
+    <maven>3.0.3</maven>
+  </prerequisites>
+          <build>
     <finalName>jenkins</finalName>
     <plugins>
       <plugin>
@@ -478,66 +359,4 @@
     </plugins>
   </build>
 
-  <profiles>
-    <profile>
-      <!-- sign war -->
-      <id>sign</id>
-      <build>
-        <plugins>
-          <plugin>
-            <artifactId>maven-jarsigner-plugin</artifactId>
-            <executions>
-              <execution>
-                <id>signWar</id>
-                <phase>verify</phase>
-                <goals>
-                  <goal>sign</goal>
-                </goals>
-                <configuration>
-                  <archive>${project.build.directory}/${project.build.finalName}.war</archive>
-                </configuration>
-              </execution>
-            </executions>
-          </plugin>
-        </plugins>
-      </build>
-    </profile>
-    <profile>
-      <!-- profile for running Grunt and optimize static resources -->
-      <id>grunt</id>
-        <build>
-            <plugins>
-                <plugin>
-                    <groupId>org.codehaus.mojo</groupId>
-                    <artifactId>exec-maven-plugin</artifactId>
-                    <executions>
-                        <execution>
-                            <id>install</id>
-                            <phase>validate</phase>
-                            <goals>
-                                <goal>exec</goal>
-                            </goals>
-                            <configuration>
-                                <executable>npm</executable>
-                                <arguments>
-                                    <argument>install</argument>
-                                </arguments>
-                            </configuration>
-                        </execution>
-                        <execution>
-                            <id>grunt</id>
-                            <phase>prepare-package</phase>
-                            <goals>
-                                <goal>exec</goal>
-                            </goals>
-                            <configuration>
-                                <executable>grunt</executable>
-                            </configuration>
-                        </execution>
-                    </executions>
-                </plugin>
-            </plugins>
-        </build>
-    </profile>
-  </profiles>
 </project>
